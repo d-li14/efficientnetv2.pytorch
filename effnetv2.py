@@ -32,13 +32,23 @@ def _make_divisible(v, divisor, min_value=None):
     return new_v
 
 
+# SiLU (Swish) activation function
+if hasattr(nn, 'SiLU'):
+    SiLU = nn.SiLU
+else:
+    # For compatibility with old PyTorch versions
+    class SiLU(nn.Module):
+        def forward(self, x):
+            return x * torch.sigmoid(x)
+
+ 
 class SELayer(nn.Module):
     def __init__(self, inp, oup, reduction=4):
         super(SELayer, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
                 nn.Linear(oup, _make_divisible(inp // reduction, 8)),
-                nn.SiLU(inplace=True),
+                SiLU(),
                 nn.Linear(_make_divisible(inp // reduction, 8), oup),
                 nn.Sigmoid()
         )
@@ -54,7 +64,7 @@ def conv_3x3_bn(inp, oup, stride):
     return nn.Sequential(
         nn.Conv2d(inp, oup, 3, stride, 1, bias=False),
         nn.BatchNorm2d(oup),
-        nn.SiLU(inplace=True)
+        SiLU()
     )
 
 
@@ -62,7 +72,7 @@ def conv_1x1_bn(inp, oup):
     return nn.Sequential(
         nn.Conv2d(inp, oup, 1, 1, 0, bias=False),
         nn.BatchNorm2d(oup),
-        nn.SiLU(inplace=True)
+        SiLU()
     )
 
 
@@ -78,11 +88,11 @@ class MBConv(nn.Module):
                 # pw
                 nn.Conv2d(inp, hidden_dim, 1, 1, 0, bias=False),
                 nn.BatchNorm2d(hidden_dim),
-                nn.SiLU(inplace=True),
+                SiLU(),
                 # dw
                 nn.Conv2d(hidden_dim, hidden_dim, 3, stride, 1, groups=hidden_dim, bias=False),
                 nn.BatchNorm2d(hidden_dim),
-                nn.SiLU(inplace=True),
+                SiLU(),
                 SELayer(inp, hidden_dim),
                 # pw-linear
                 nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False),
@@ -93,7 +103,7 @@ class MBConv(nn.Module):
                 # fused
                 nn.Conv2d(inp, hidden_dim, 3, stride, 1, bias=False),
                 nn.BatchNorm2d(hidden_dim),
-                nn.SiLU(inplace=True),
+                SiLU(),
                 # pw-linear
                 nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False),
                 nn.BatchNorm2d(oup),
