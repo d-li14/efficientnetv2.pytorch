@@ -19,8 +19,6 @@ Reproduction of EfficientNet V2 architecture as described in [EfficientNetV2: Sm
 | EfficientNetV2-B2 | 10.74M | 9.0G @ 224 | |
 | EfficientNetV2-B3 | 14.46M | 11.9G @ 224  | |
 
-* Flops are all measured on input (224, 224).
-
 Stay tuned for ImageNet pre-trained weights.
 
 ## Acknowledgement
