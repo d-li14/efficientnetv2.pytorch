@@ -201,34 +201,6 @@ def effnetv2_m(**kwargs):
     }
     kwargs.update(settings)
     return EffNetV2(**kwargs)
-=======
-    cfgs = [
-        # t, c, n, s, SE
-        [1,  24,  2, 1, 0],
-        [4,  48,  4, 2, 0],
-        [4,  64,  4, 2, 0],
-        [4, 128,  6, 2, 1],
-        [6, 160,  9, 1, 1],
-        [6, 272, 15, 2, 1],
-    ]
-    return EffNetV2(cfgs, **kwargs)
-
-
-def effnetv2_m(**kwargs):
-    """
-    Constructs a EfficientNetV2-M model
-    """
-    cfgs = [
-        # t, c, n, s, SE
-        [1,  24,  3, 1, 0],
-        [4,  48,  5, 2, 0],
-        [4,  80,  5, 2, 0],
-        [4, 160,  7, 2, 1],
-        [6, 176, 14, 1, 1],
-        [6, 304, 18, 2, 1],
-        [6, 512,  5, 1, 1],
-    ]
-    return EffNetV2(cfgs, **kwargs)
 
 
 def effnetv2_l(**kwargs):
