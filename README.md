@@ -6,17 +6,14 @@
 
 Reproduction of EfficientNet V2 architecture as described in [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298) by Mingxing Tan, Quoc V. Le with the [PyTorch](pytorch.org) framework.
 
-# Requirements
-
-PyTorch 1.7+ is required to support [nn.SiLU](https://pytorch.org/docs/master/generated/torch.nn.SiLU.html)
-
 # Models
 
 | Architecture      | # Parameters | FLOPs | Top-1 Acc. (%) |
 | ----------------- | ------------ | ------ | -------------------------- |
-| EfficientNetV2-S    | 24M | 8.8B |  |
-
-More model definitions are pending for architectural details from the authors.
+| EfficientNetV2-S    | 24.12M | 8.64G @ 384 |  |
+| EfficientNetV2-M    | 55.30M | 24.74G @ 480 |  |
+| EfficientNetV2-L    | 119.36M | 56.13G @ 384 |  |
+| EfficientNetV2-XL    | 208.96M | 93.41G @ 512 |  |
 
 Stay tuned for ImageNet pre-trained weights.
 
@@ -42,3 +39,5 @@ month = {June},
 year = {2018}
 }
 ```
+
+The official [TensorFlow implementation](https://github.com/google/automl/tree/master/efficientnetv2) by [@mingxingtan](https://github.com/mingxingtan).
