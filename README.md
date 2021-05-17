@@ -6,7 +6,7 @@
 
 Reproduction of EfficientNet V2 architecture as described in [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298) by Mingxing Tan, Quoc V. Le with the [PyTorch](pytorch.org) framework.
 
-# Models
+## Models
 
 | Architecture      | # Parameters | FLOPs | Top-1 Acc. (%) |
 | ----------------- | ------------ | ------ | -------------------------- |
@@ -17,7 +17,7 @@ Reproduction of EfficientNet V2 architecture as described in [EfficientNetV2: Sm
 
 Stay tuned for ImageNet pre-trained weights.
 
-# Acknowledgement
+## Acknowledgement
 
 The implementation is heavily borrowed from [HBONet](https://github.com/d-li14/HBONet) or [MobileNetV2](https://github.com/d-li14/mobilenetv2.pytorch), please kindly consider citing the following
 
