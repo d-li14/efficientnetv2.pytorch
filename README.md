@@ -14,9 +14,20 @@ PyTorch 1.7+ is required to support [nn.SiLU](https://pytorch.org/docs/master/ge
 
 | Architecture      | # Parameters | FLOPs | Top-1 Acc. (%) |
 | ----------------- | ------------ | ------ | -------------------------- |
-| EfficientNetV2-S    | 24M | 8.8B |  |
+| EfficientNetV2-S  | 22.103832M   | 23202.270720M  |  |
+| EfficientNetV2-M  | 55.300016M   | 43557.531136M |
+| EfficientNetV2-L  | 119.355792M  | 98599.022080M|
+| EfficientNetV2-XL | 208.960328M  | 144211.693568M|
+| EfficientNetV2-B0 | 7.780248M | 5952.832768M | |
+| EfficientNetV2-B1 | 9.009872M | 6685.624320M | |
+| EfficientNetV2-B2 | 10.749136M | 9067.325440M | |
+| EfficientNetV2-B3 | 14.461720M | 11929.994368M | |
+
+* Flops are all measured on input (224, 224).
 
 More model definitions are pending for architectural details from the authors.
+
+
 
 Stay tuned for ImageNet pre-trained weights.
 
