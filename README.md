@@ -10,7 +10,7 @@ Reproduction of EfficientNet V2 architecture as described in [EfficientNetV2: Sm
 
 | Architecture      | # Parameters | FLOPs | Top-1 Acc. (%) |
 | ----------------- | ------------ | ------ | -------------------------- |
-| EfficientNetV2-S    | 24.12M | 8.64G @ 384 |  |
+| EfficientNetV2-S    | 22.10M | 8.42G @ 384 |  |
 | EfficientNetV2-M    | 55.30M | 24.74G @ 480 |  |
 | EfficientNetV2-L    | 119.36M | 56.13G @ 480 |  |
 | EfficientNetV2-XL    | 208.96M | 93.41G @ 512 |  |
