@@ -9,12 +9,13 @@ import from https://github.com/d-li14/mobilenetv2.pytorch
 import torch
 import torch.nn as nn
 import math
+from functools import partial
 
 __all__ = ['effnetv2_s', 'effnetv2_m', 'effnetv2_l', 'effnetv2_xl',
            'effnetv2_base', 'effnetv2_b0', 'effnetv2_b1', 'effnetv2_b2', 'effnetv2_b3']
 
 
-def _make_divisible(v, divisor, min_value=None):
+def _make_divisible(v, divisor, min_value=None, round_limit=.9):
     """
     This function is taken from the original tf repo.
     It ensures that all layers have a channel number that is divisible by 8
@@ -29,9 +30,16 @@ def _make_divisible(v, divisor, min_value=None):
         min_value = divisor
     new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
     # Make sure that round down does not go down by more than 10%.
-    if new_v < 0.9 * v:
+    if new_v < round_limit * v:
         new_v += divisor
     return new_v
+
+
+def round_channels(channels, multiplier=1.0, divisor=8, channel_min=None, round_limit=0.9):
+    """Round number of filters based on depth multiplier."""
+    if not multiplier:
+        return channels
+    return _make_divisible(channels * multiplier, divisor, min_value=channel_min, round_limit=round_limit)
 
 
 # SiLU (Swish) activation function
@@ -120,13 +128,13 @@ class MBConv(nn.Module):
 
 
 class EffNetV2(nn.Module):
-    def __init__(self, num_classes=1000, width_mult=1., cfgs=None):
+    def __init__(self, num_classes=1000, width_mult=1., cfgs=None, stem_size=24, num_feature=1792):
         super(EffNetV2, self).__init__()
         # setting of inverted residual blocks
         self.cfgs = cfgs
 
         # building first layer
-        input_channel = _make_divisible(24 * width_mult, 8)
+        input_channel = _make_divisible(stem_size * width_mult, 8)
         layers = [conv_3x3_bn(3, input_channel, 2)]
         # building inverted residual blocks
         block = MBConv
@@ -137,7 +145,7 @@ class EffNetV2(nn.Module):
                 input_channel = output_channel
         self.features = nn.Sequential(*layers)
         # building last several layers
-        output_channel = _make_divisible(1792 * width_mult, 8) if width_mult > 1.0 else 1792
+        output_channel = _make_divisible(num_feature * width_mult, 8) if width_mult > 1.0 else num_feature
         self.conv = conv_1x1_bn(input_channel, output_channel)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.classifier = nn.Linear(output_channel, num_classes)
@@ -186,7 +194,7 @@ def effnetv2_s(**kwargs):
 
 def effnetv2_m(**kwargs):
     """
-    Constructs a EfficientNet V2 model
+    Constructs a EfficientNetV2-M model
     """
     settings = {"cfgs": [
         # t, c, n, s, SE
@@ -205,7 +213,7 @@ def effnetv2_m(**kwargs):
 
 def effnetv2_l(**kwargs):
     """
-    Constructs a EfficientNet V2 model
+    Constructs a EfficientNetV2-L model
     """
     settings = {"cfgs": [
         # t, c, n, s, SE
@@ -224,7 +232,7 @@ def effnetv2_l(**kwargs):
 
 def effnetv2_xl(**kwargs):
     """
-    Constructs a EfficientNet V2 model
+    Constructs a EfficientNetV2-XL model
     """
     settings = {"cfgs": [
         # t, c, n, s, SE
@@ -243,18 +251,31 @@ def effnetv2_xl(**kwargs):
 
 def effnetv2_base(**kwargs):
     """
-    Constructs a EfficientNet V2 model
+    Constructs a EfficientNetV2-Base model
     """
+    width_mult = kwargs.pop("width_mult", 1.0)
+    round_chs_fn = partial(round_channels, multiplier=width_mult, round_limit=0.)
+    num_feature = round_chs_fn(1280)
+
+    depth_multiplier = kwargs.pop("depth_multiplier", 1.0)
+
     settings = {"cfgs": [
-        # t, c, n, s, SE
-        [1, 16, 1, 1, 0],
-        [4, 32, 2, 2, 0],
-        [4, 48, 2, 2, 0],
-        [4, 96, 3, 2, 1],
-        [6, 112, 5, 1, 1],
-        [6, 192, 8, 2, 1],
-    ]
+            # t, c, n, s, SE
+            [1, 16, 1, 1, 0],
+            [4, 32, 2, 2, 0],
+            [4, 48, 2, 2, 0],
+            [4, 96, 3, 2, 1],
+            [6, 112, 5, 1, 1],
+            [6, 192, 8, 2, 1],
+        ],
+        "stem_size": 32,
+        "num_feature": num_feature,
+        "width_mult": width_mult
     }
+    # scale depth
+    for i in range(len(settings["cfgs"])):
+        settings["cfgs"][i][2] = int(math.ceil(depth_multiplier*settings["cfgs"][i][2]))
+
     kwargs.update(settings)
     return EffNetV2(**kwargs)
 
@@ -264,7 +285,8 @@ effnetv2_b0 = effnetv2_base
 
 def effnetv2_b1(**kwargs):
     settings = {
-        "width_mult": 1.1,
+        "depth_multiplier": 1.1,
+        "width_mult": 1.0,
     }
     kwargs.update(settings)
     return effnetv2_base(**kwargs)
@@ -272,7 +294,8 @@ def effnetv2_b1(**kwargs):
 
 def effnetv2_b2(**kwargs):
     settings = {
-        "width_mult": 1.2,
+        "depth_multiplier": 1.2,
+        "width_mult": 1.1,
     }
     kwargs.update(settings)
     return effnetv2_base(**kwargs)
@@ -280,7 +303,8 @@ def effnetv2_b2(**kwargs):
 
 def effnetv2_b3(**kwargs):
     settings = {
-        "width_mult": 1.4,
+        "depth_multiplier": 1.4,
+        "width_mult": 1.2,
     }
     kwargs.update(settings)
     return effnetv2_base(**kwargs)

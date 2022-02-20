@@ -10,14 +10,14 @@ Reproduction of EfficientNet V2 architecture as described in [EfficientNetV2: Sm
 
 | Architecture      | # Parameters | FLOPs | Top-1 Acc. (%) |
 | ----------------- | ------------ | ------ | -------------------------- |
-| EfficientNetV2-S    | 24.12M | 8.64G @ 384 |  |
-| EfficientNetV2-M    | 55.30M | 24.74G @ 480 |  |
-| EfficientNetV2-L    | 119.36M | 56.13G @ 384 |  |
-| EfficientNetV2-XL    | 208.96M | 93.41G @ 512 |  |
-| EfficientNetV2-B0 | 7.78M | 5.9G @ 224 | |
-| EfficientNetV2-B1 | 9.00M | 6.6G @ 224 | |
-| EfficientNetV2-B2 | 10.74M | 9.0G @ 224 | |
-| EfficientNetV2-B3 | 14.46M | 11.9G @ 224  | |
+| EfficientNetV2-B0 | 7.17M | 0.79G @ 224 | |
+| EfficientNetV2-B1 | 8.18M | 1.09G @ 224 | |
+| EfficientNetV2-B2 | 10.37M | 1.25G @ 224 | |
+| EfficientNetV2-B3 | 14.69M | 1.83G @ 224  | |
+| EfficientNetV2-S    | 21.10M | 2.90G @ 224 |  |
+| EfficientNetV2-M    | 55.30M | 5.44G @ 224 |  |
+| EfficientNetV2-L    | 119.36M | 12.32G @ 224 |  |
+| EfficientNetV2-XL    | 208.96M | 18.02G @ 224 |  |
 
 Stay tuned for ImageNet pre-trained weights.
 

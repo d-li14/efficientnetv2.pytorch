@@ -22,21 +22,24 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser('generate onnx timm models', parents=[get_args_parser()])
     args = parser.parse_args()
 
-    if 'effnetv2' in args.model:
-        model = eval(args.model)()
+    model_names = ['s', 'm', 'l', 'xl', 'b0', 'b1', 'b2', 'b3']
+    for m in model_names:
+        model_name = "effnetv2_" + m
+        model = eval(model_name)()
+        print(model_name)
+        x = torch.randn(1, 3, 224, 224)
+        flops, params = profile(model, inputs=(x,), verbose=False)
+        print("flops = %fM" % (flops / 1e6, ))
+        print("param size = %fM" % (params / 1e6, ))
 
-    x = torch.randn(args.batch_size, 3, 224, 224)
-    flops, params = profile(model, inputs=(x,), verbose=False)
-    print("flops = %fM" % (flops / 1e6, ))
-    print("param size = %fM" % (params / 1e6, ))
-
-    if args.export:
-        print("exporting....")
-        model.eval()
-        torch.onnx.export(model, x, args.model+"_bs"+str(args.batch_size)+".onnx",
-                          input_names=['input'],
-                          output_names=['output'],
-                          verbose=True,
-                          opset_version=11,
-                          operator_export_type=torch.onnx.OperatorExportTypes.ONNX)
-        print("exported!")
+        if args.export:
+            print("exporting....")
+            model.eval()
+            x = torch.randn(args.batch_size, 3, 224, 224)
+            torch.onnx.export(model, x, args.model+"_bs"+str(args.batch_size)+".onnx",
+                              input_names=['input'],
+                              output_names=['output'],
+                              verbose=True,
+                              opset_version=11,
+                              operator_export_type=torch.onnx.OperatorExportTypes.ONNX)
+            print("exported!")
